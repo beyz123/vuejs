@@ -3,23 +3,28 @@
     <div class="cart">
       <h3>SEPET</h3>
       <ul>
-        <li v-for="item in cartItems" :key="item.id">{{item.title}}<p>Miktar: {{calculateCount}}
-        </p></li>
+        <li v-for="(item, index) in cartItems" :key="index">{{ item.title }}
+          ({{item.count2}})
+          <button @click="reduceProduct(index)">Eksilt</button>
+          <button @click="deleteProduct(index)">Kaldir</button>
+        </li>
       </ul>
       <p v-if="cartItems.length == 0">Sepetiniz bostur. Alisverise başlayabilirsiniz..</p>
     </div>
-    <product @addToCart="cartItems.push($event)" :product="product" v-for="product in productList" :key="product.id"/>
+    <product @addToCart="addToCart" :product="product" v-for="product in productList" :key="product.id" />
   </div>
 </template>
 
 <script>
 import productCom from "@/components/Product.vue";
+
 export default {
   components: {
     'product': productCom
   },
   data() {
     return {
+      count: 0,
       productList: [
         {
           id: 1,
@@ -44,24 +49,44 @@ export default {
         }
       ],
       cartItems: [],
-      calculateCount() {
-        count_product: count_product + 1
+    }
+  },
+  methods: {
+    addToCart(product) {
+      if (this.cartItems.indexOf(product) != -1) {
+        let index = this.cartItems.indexOf(product)
+        this.cartItems[index]['count2']++
+        this.cartItems.splice(0, 0)
       }
+      else {
+        product['count2'] = 1
+        this.cartItems.push(product)
+      }
+    },
+    reduceProduct(index) {
+      // let index = this.cartItems.indexOf(product)
+      this.cartItems[index]['count2']--
+      this.cartItems.splice(0, 0)
+    },
+    deleteProduct(index) {
+      // let index = this.cartItems.indexOf(product)
+      this.cartItems.splice(index, 1)
     }
   }
 }
 </script>
 
 <style>
-  .container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  },
-  .cart{
-    margin-bottom: 50px;
-  }
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.cart {
+  margin-bottom: 50px;
+}
 </style>
 
 
